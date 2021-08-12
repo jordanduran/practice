@@ -1,51 +1,39 @@
 import { useState, useEffect } from 'react';
-import SearchForm from './components/SearchForm';
+import TodoForm from './components/TodoForm';
+import Todos from './components/Todos';
 
 const App = () => {
-  const [users, setUsers] = useState([]);
+  const [todos, setTodos] = useState([]);
 
   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/users')
+    fetch('https://jsonplaceholder.typicode.com/todos')
       .then((result) => result.json())
-      .then((data) => setUsers(data))
-      .catch((error) => console.error(error));
+      .then((data) => setTodos(data.slice(0, 10)));
   }, []);
 
-  const listOfUsers = users.length
-    ? users.map((user) => {
-        return (
-          <tr key={user.id}>
-            <td>{user.name}</td>
-            <td>{user.email}</td>
-            <td>{user.phone}</td>
-            <td>{user.address.city}</td>
-          </tr>
-        );
-      })
-    : 'No users found';
+  const handleAddTodo = (newTodo) => {
+    const updatedTodos = [
+      ...todos,
+      {
+        id: Date.now(),
+        title: newTodo,
+        completed: false,
+      },
+    ];
+    setTodos(updatedTodos);
+  };
 
-  const handleFilterTable = (searchTerm) => {
-    const updatedTable = users.filter((user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    setUsers(updatedTable);
+  const handleDeleteTodo = (id) => {
+    const updatedTodos = todos.filter((todo) => todo.id !== id);
+    setTodos(updatedTodos);
   };
 
   return (
     <>
-      <SearchForm onHandleFilterTable={handleFilterTable} />
-      <table className='users-table'>
-        <tbody>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>City</th>
-          </tr>
-          {listOfUsers}
-        </tbody>
-      </table>
+      <TodoForm onHandleAddTodo={handleAddTodo} />
+      <div className='container'>
+        <Todos todos={todos} onHandleDeleteTodos={handleDeleteTodo} />
+      </div>
     </>
   );
 };

@@ -12,14 +12,23 @@ code {
     monospace;
 }
 
-.users-table {
-  width: 800px;
-  margin: 0 auto;
-}
-
-.search-form {
-  width: 600px;
+.todo-form {
+  width: 500px;
   margin: 0 auto;
   margin-top: 2em;
-  margin-bottom: 2em;
+  margin-bottom: 3em;
+}
+
+.todo {
+  text-transform: capitalize;
+  font-weight: 700;
+}
+
+.delete-icon {
+  cursor: pointer;
+}
+
+.delete-icon:hover {
+  color: rgba(255, 37, 37, 0.934);
+  transition: 0.3s ease;
 }
