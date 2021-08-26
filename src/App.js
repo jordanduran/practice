@@ -1,41 +1,39 @@
 import { useState, useEffect } from 'react';
-import TodoForm from './components/TodoForm';
-import Todos from './components/Todos';
 
 const App = () => {
-  const [todos, setTodos] = useState([]);
+  const [photos, setPhotos] = useState([]);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/todos')
-      .then((result) => result.json())
-      .then((data) => setTodos(data.slice(0, 10)));
-  }, []);
+    fetch('https://jsonplaceholder.typicode.com/photos')
+      .then((response) => response.json())
+      .then((data) => setPhotos(data.slice(0, 12)))
+      .catch((error) => console.error(error));
+  });
 
-  const handleAddTodo = (newTodo) => {
-    const updatedTodos = [
-      ...todos,
-      {
-        id: Date.now(),
-        title: newTodo,
-        completed: false,
-      },
-    ];
-    setTodos(updatedTodos);
+  const handlePhotoClick = (id) => {
+    if (id !== selectedPhoto) {
+      setSelectedPhoto(id);
+    } else {
+      setSelectedPhoto(null);
+    };
   };
 
-  const handleDeleteTodo = (id) => {
-    const updatedTodos = todos.filter((todo) => todo.id !== id);
-    setTodos(updatedTodos);
-  };
+  const listOfPhotos = photos.length
+    ? photos.map((photo) => {
+        return (
+          <img
+            src={photo.url}
+            alt={photo.title}
+            key={photo.id}
+            className={selectedPhoto === photo.id ? 'photo large' : 'photo'}
+            onClick={() => handlePhotoClick(photo.id)}
+          />
+        );
+      })
+    : 'No photos found';
 
-  return (
-    <>
-      <TodoForm onHandleAddTodo={handleAddTodo} />
-      <div className='container'>
-        <Todos todos={todos} onHandleDeleteTodos={handleDeleteTodo} />
-      </div>
-    </>
-  );
+  return <div className='photo-container'>{listOfPhotos}</div>;
 };
 
 export default App;
